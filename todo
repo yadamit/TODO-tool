@@ -1,0 +1,63 @@
+#!/usr/bin/python3
+
+"""
+Author: Amit Yadav
+Date: May 04, 2020
+
+TODO: 
+
+"""
+
+import argparse
+import os.path
+import getpass
+from classes import *
+
+
+user = getpass.getuser()
+parser = argparse.ArgumentParser()
+
+home = os.path.expanduser("~")
+data_file = home+"/todo.pkl"
+
+data = None
+if os.path.isfile(data_file):
+    with open(data_file, "rb") as f:
+        data = pickle.load(f)
+else:
+    data = Data()
+
+parser.add_argument("-a", "--add", type=str, help="Add a new task")
+parser.add_argument("--details", type=str, help="Use it to add details for the task,\
+                                                 must be used with --add")
+parser.add_argument("--done", type=str, help="Mark a task done")
+parser.add_argument("-r", "--remove", type=str, help="Remove a task")
+parser.add_argument("--removeall", action="store_true", help="Remove all tasks")
+parser.add_argument("--all", action="store_true", help="Print all tasks")
+parser.add_argument("--upcoming", action="store_true", help="Print only upcoming tasks")
+
+
+args = parser.parse_args()
+
+if args.add is not None:
+    data.add_task(args.add, args.details)
+    data.save_data(data_file)
+if args.details and not args.add:
+    print(bcolors.FAIL, "--details can't be used without --add")
+    exit()
+if args.done is not None:
+    data.markDone(args.done)
+    data.save_data(data_file)
+if args.remove is not None:
+    data.remove_task(args.remove)
+    data.save_data(data_file)
+if args.removeall:
+    data.remove_all()
+    data.save_data(data_file)
+if args.upcoming:
+    data.print_upcoming()
+if args.all:
+    data.print_all()
+
+if not (args.add or args.remove or args.all or args.upcoming):
+    data.print_upcoming()
