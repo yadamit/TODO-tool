@@ -30,6 +30,7 @@ else:
 parser.add_argument("-a", "--add", type=str, help="Add a new task")
 parser.add_argument("--details", type=str, help="Use it to add details for the task,\
                                                  must be used with --add")
+parser.add_argument("--update", nargs="+", help="Update an existing task")
 parser.add_argument("--done", type=str, help="Mark a task done")
 parser.add_argument("-r", "--remove", type=str, help="Remove a task")
 parser.add_argument("--removeall", action="store_true", help="Remove all tasks")
@@ -42,9 +43,12 @@ args = parser.parse_args()
 if args.add is not None:
     data.add_task(args.add, args.details)
     data.save_data(data_file)
-if args.details and not args.add:
-    print(bcolors.FAIL, "--details can't be used without --add")
+if args.details and not args.add and not args.update:
+    print(bcolors.FAIL, "--details can't be used alone")
     exit()
+if args.update:
+    data.update(*args.update, details=args.details)
+    data.save_data(data_file)
 if args.done is not None:
     data.markDone(args.done)
     data.save_data(data_file)
@@ -59,5 +63,5 @@ if args.upcoming:
 if args.all:
     data.print_all()
 
-if not (args.add or args.remove or args.all or args.upcoming):
+if not (args.add or args.remove or args.all or args.upcoming or args.update):
     data.print_upcoming()

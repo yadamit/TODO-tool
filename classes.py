@@ -39,6 +39,26 @@ class Data:
                 delete.markDone()
                 print("Done: \t", delete)
                 break
+    def update(self, old_title, new_title=None, details=None):
+        for i,t in enumerate(self.done):
+            if t.name==old_title:
+                task = self.done[i]
+                if new_title:
+                    task.name = new_title
+                if details:
+                    task.details = details
+                print("Updated: ", task)
+                return
+        for i,t in enumerate(self.tasks):
+            if t.name==old_title:
+                task = self.tasks[i]
+                if new_title:
+                    task.name = new_title
+                if details:
+                    task.details = details
+                print("Upadted: ", task)
+                return
+        print(bcolors.FAIL+f"{old_title}: No such task found"+bcolors.DEFAULT)
     def remove_task(self, name):
         for i,t in enumerate(self.done):
             if t.name==name:
@@ -50,7 +70,7 @@ class Data:
                 delete = self.tasks.pop(i)
                 print("Removed tasks: ", delete)
                 return
-        print(bcolors.FAIL+f"{name}: No such task found")
+        print(bcolors.FAIL+f"{name}: No such task found"+bcolors.DEFAULT)
     def remove_all(self):
         self.tasks = []
     def print_all(self):
